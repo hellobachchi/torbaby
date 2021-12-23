@@ -5,16 +5,17 @@ from telegram.ext.commandhandler import CommandHandler
 from telegram.ext.messagehandler import MessageHandler
 from telegram.ext.filters import Filters
 from api import send_mag_link, torrent, list_movies, gen_dow_link
-from time import sleep
+from time import sleep 
+import asyncio
 from config import TOKEN 
 import os
 user_tasks = []
 updater = Updater(TOKEN)
 
 
-def purga():
+async def purga():
     while True:
-        sleep(1)
+        await asyncio.sleep(1)
         if user_tasks:
             try:
                 torlist = list_movies()['result']['pageData']
