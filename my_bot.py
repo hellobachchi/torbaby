@@ -12,25 +12,25 @@ user_tasks = []
 updater = Updater(TOKEN)
 
 
-# def purga():
-#     while True:
-#         sleep(1)
-#         if user_tasks:
-#             try:
-#                 torlist = list_movies()['result']['pageData']
-#                 for tit in torlist:
-#                     for task in user_tasks:
-#                         if tit['torrentDTO']['torrentHash'] in task[2]:
-#                             torname = tit['torrentDTO']['torrentName']
+def purga():
+    while True:
+        sleep(1)
+        if user_tasks:
+            try:
+                torlist = list_movies()['result']['pageData']
+                for tit in torlist:
+                    for task in user_tasks:
+                        if tit['torrentDTO']['torrentHash'] in task[2]:
+                            torname = tit['torrentDTO']['torrentName']
 
-#                             if torname != None and tit['torrentDTO']['progress'] == 100.0:
-#                                 torhash = tit['torrentDTO']['torrentHash']
-#                                 dlink = gen_dow_link(torhash)
-#                                 updater.bot.send_message(
-#                                     chat_id=task[0], text=torname+"\n\n"+dlink)
-#                                 user_tasks.remove(task)
-#             except:
-#                 pass
+                            if torname != None and tit['torrentDTO']['progress'] == 100.0:
+                                torhash = tit['torrentDTO']['torrentHash']
+                                dlink = gen_dow_link(torhash)
+                                updater.bot.send_message(
+                                    chat_id=task[0], text=torname+"\n\n"+dlink)
+                                user_tasks.remove(task)
+            except:
+                pass
 
 
 def start(update: Update, context: CallbackContext):
@@ -75,7 +75,7 @@ def downloader(update, context):
 
 
 
-# updater.dispatcher.run_async(purga)
+updater.dispatcher.run_async(purga)
 updater.dispatcher.add_handler(MessageHandler(Filters.document, downloader))
 updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('help', help))
