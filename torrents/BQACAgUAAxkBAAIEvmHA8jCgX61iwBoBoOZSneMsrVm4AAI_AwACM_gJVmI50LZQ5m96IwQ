@@ -1,0 +1,67 @@
+from telegram.ext.updater import Updater
+from telegram.update import Update
+from telegram.ext.callbackcontext import CallbackContext
+from telegram.ext.commandhandler import CommandHandler
+from telegram.ext.messagehandler import MessageHandler
+from telegram.ext.filters import Filters
+from api import send_mag_link,torrent,list_movies 
+from time import sleep
+from telegram.ext.dispatcher import run_async
+
+updater = Updater("5072857739:AAFrHtIxi7oPVdrBUs5ozgB6dHIkSWsbuPE",
+                  use_context=True)
+
+
+def purga(): 
+    x=0  
+    while True:
+        x+=1 
+        sleep(1)
+        print(x)
+
+
+
+
+def start(update: Update, context: CallbackContext):
+    update.message.reply_text(f"Hi {update.message.from_user['first_name']} 👋")
+    update.message.reply_text("Send me a torrent or magnet link")
+ 
+def help(update: Update, context: CallbackContext):
+    update.message.reply_text("No Help Bitch!")
+
+
+def send_mag(update: Update, context: CallbackContext):
+    msg = update.message.text
+
+    if 'hi' in msg.lower() or 'hello' in msg.lower():
+        update.message.reply_text(
+            f"Hello {update.message.from_user['first_name']} 👋 !")
+        return
+    if 'magnet:?' in msg: 
+        # context.user_data[key] = msg
+        send_mag_link(msg)
+    else:
+        update.message.reply_text("NOPE Buddy! I need a magnet link!")
+
+
+def testing(update: Update, context: CallbackContext):
+    context.bot.send_message(
+        chat_id=update.message.from_user['id'], text="I'm sorry Dave I'm afraid I can't do that.")
+
+def downloader(update, context):
+    myfile = context.bot.get_file(update.message.document)
+    reply=torrent(myfile) 
+    if reply!=None:
+        update.message.reply_text(reply)
+
+
+updater.dispatcher.run_async(purga)
+updater.dispatcher.add_handler(MessageHandler(Filters.document, downloader))
+updater.dispatcher.add_handler(CommandHandler('start', start))
+updater.dispatcher.add_handler(CommandHandler('help', help))
+updater.dispatcher.add_handler(CommandHandler('test', testing))
+updater.dispatcher.add_handler(MessageHandler(Filters.text, send_mag))
+
+
+updater.start_polling()
+updater.idle()
