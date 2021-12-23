@@ -82,7 +82,7 @@ updater.dispatcher.add_handler(CommandHandler('help', help))
 updater.dispatcher.add_handler(CommandHandler('test', testing))
 updater.dispatcher.add_handler(MessageHandler(Filters.text, send_mag)) 
 
-updater.start_webhook(listen='0.0.0.0', port=os.get('PORT', 5000), url_path=TOKEN,
+updater.start_webhook(listen='0.0.0.0', port=os.environ.get('PORT', 5000), url_path=TOKEN,
                       webhook_url='https://torbaby.herokuapp.com/' + TOKEN)
 # updater.start_polling()
 updater.idle()
