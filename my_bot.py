@@ -1,3 +1,4 @@
+import threading
 from telegram.ext.updater import Updater
 from telegram.update import Update
 from telegram.ext.callbackcontext import CallbackContext
@@ -6,16 +7,14 @@ from telegram.ext.messagehandler import MessageHandler
 from telegram.ext.filters import Filters
 from api import send_mag_link, torrent, list_movies, gen_dow_link
 from time import sleep 
-import asyncio
 from config import TOKEN 
 import os
 user_tasks = []
 updater = Updater(TOKEN)
 
-
-async def purga():
+def purga():
     while True:
-        await asyncio.sleep(1)
+        sleep(1)
         if user_tasks:
             try:
                 torlist = list_movies()['result']['pageData']
@@ -34,6 +33,8 @@ async def purga():
                 pass
 
 
+x = threading.Thread(target=purga,)
+x.start()
 def start(update: Update, context: CallbackContext):
     update.message.reply_text(f"Hi {update.message.from_user['first_name']} 👋")
     update.message.reply_text("Send me a torrent or magnet link")
@@ -76,7 +77,7 @@ def downloader(update, context):
 
 
 
-updater.dispatcher.run_async(purga)
+
 updater.dispatcher.add_handler(MessageHandler(Filters.document, downloader))
 updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('help', help))
